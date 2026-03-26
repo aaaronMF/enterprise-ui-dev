@@ -14,15 +14,26 @@ jobs:
       - uses: actions/checkout@v3
       - name: Setup Node
         uses: actions/setup-node@v3
+      - uses: actions/cache@v3
+        id: npm-cache
+        with:
+          path: ~/.npm
+          key: npm-${{ hashFiles('**/package-lock.json') }}
       - run: npm ci
       - run: npm test
 
   build:
     runs-on: ubuntu-latest
-  
+    # requires unit-test to finish to run. can use array of jobs instead
+    # needs: unit-test 
     steps:
       - uses: actions/checkout@v3
       - name: build
         uses: actions/setup-node@v3
+      - uses: actions/cache@v3
+        id: npm-cache
+        with:
+          path: ~/.npm
+          key: npm-${{ hashFiles('**/package-lock.json') }}
       - run: npm ci
       - run: npm run build
