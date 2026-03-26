@@ -1,0 +1,46 @@
+name: Run Unit Tests and Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  unit-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
+      # - uses: actions/cache@v3
+      #   id: npm-cache
+      #   with:
+      #     path: ~/.npm
+      #     key: npm-${{ hashFiles('**/package-lock.json') }}
+      - run: npm ci
+      - run: npm test
+
+  build:
+    runs-on: ubuntu-latest
+    # requires unit-test to finish to run. can use array of jobs instead
+    # needs: unit-test 
+    steps:
+      - uses: actions/checkout@v3
+      - name: build
+        uses: actions/setup-node@v3
+      - uses: actions/cache@v3
+        with:
+          node-version: 18
+          cache: 'npm'
+      # - uses: actions/cache@v3
+      #   id: npm-cache
+      #   with:
+      #     path: ~/.npm
+      #     key: npm-${{ hashFiles('**/package-lock.json') }}
+      - run: npm ci
+      - run: npm run build
